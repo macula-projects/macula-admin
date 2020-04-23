@@ -12,6 +12,7 @@ import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logo.svg';
+import styles from './BasicLayout.less';
 
 const noMatch = (
   <Result
@@ -101,51 +102,66 @@ const BasicLayout = props => {
   return (
     <>
       <ProLayout
+        title='Ant Design Pro2'
+        className={styles.customLayout}
+        layout="topmenu"
         logo={logo}
-        formatMessage={formatMessage}
-        // headerRender={false}
-        menuHeaderRender={(logoDom, titleDom) => (
-          <Link to="/">
-            {logoDom}
-            {titleDom}
-          </Link>
-        )}
-        onCollapse={handleMenuCollapse}
-        menuItemRender={(menuItemProps, defaultDom) => {
-          if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
-            return defaultDom;
-          }
-
-          return <Link to={menuItemProps.path}>{defaultDom}</Link>;
-        }}
-        breadcrumbRender={(routers = []) => [
+        disableMobile
+        disableContentMargin
+        rightContentRender={(rightProps) => <RightContent {...rightProps} {...settings} />}
+        menuDataRender={() => [
           {
-            path: '/',
-            breadcrumbName: formatMessage({
-              id: 'menu.home',
-            }),
+            path: '/welcome',
+            name: '欢迎',
           },
-          ...routers,
+          {
+            path: '/admin',
+            name: '管理'
+          },
         ]}
-        itemRender={(route, params, routes, paths) => {
-          const first = routes.indexOf(route) === 0;
-          return first ? (
-            <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
-          ) : (
-            <span>{route.breadcrumbName}</span>
-          );
-        }}
-        footerRender={() => defaultFooterDom}
-        menuDataRender={menuDataRender}
-        rightContentRender={() => <RightContent />}
-        {...props}
-        {...settings}
       >
-        <Authorized authority={authorized.authority} noMatch={noMatch}>
-          {children}
-        </Authorized>
+        <ProLayout
+          formatMessage={formatMessage}
+          headerRender={false}
+          navTheme="light"
+          menuHeaderRender={false}
+          onCollapse={handleMenuCollapse}
+          menuItemRender={(menuItemProps, defaultDom) => {
+            if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
+              return defaultDom;
+            }
+
+            return <Link to={menuItemProps.path}>{defaultDom}</Link>;
+          }}
+          breadcrumbRender={(routers = []) => [
+            {
+              path: '/',
+              breadcrumbName: formatMessage({
+                id: 'menu.home',
+              }),
+            },
+            ...routers,
+          ]}
+          itemRender={(route, params, routes, paths) => {
+            const first = routes.indexOf(route) === 0;
+            return first ? (
+              <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
+            ) : (
+              <span>{route.breadcrumbName}</span>
+            );
+          }}
+          footerRender={() => defaultFooterDom}
+          menuDataRender={menuDataRender}
+          rightContentRender={() => <RightContent />}
+          {...props}
+          {...settings}
+        >
+          <Authorized authority={authorized.authority} noMatch={noMatch}>
+            {children}
+          </Authorized>
+        </ProLayout>
       </ProLayout>
-      <SettingDrawer
+      {/* <SettingDrawer
         settings={settings}
         onSettingChange={config =>
           dispatch({
@@ -153,7 +169,7 @@ const BasicLayout = props => {
             payload: config,
           })
         }
-      />
+      /> */}
     </>
   );
 };
